@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Author Dashboard - CUST Research Desk</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="form-box">
+        <h2>Author Dashboard - Welcome {{ user.name }}</h2>
+
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('author_dashboard') }}">
+            <!-- Paper Title -->
+            <label for="title">Paper Title</label>
+            <input type="text" id="title" name="title" value="{{ submission.title if submission }}" required>
+
+            <!-- Abstract -->
+            <label for="abstract">Abstract</label>
+            <textarea id="abstract" name="abstract" rows="4" required>{{ submission.abstract if submission }}</textarea>
+
+            <!-- Author Names -->
+            <label for="authors">Author Names (comma-separated)</label>
+            <input type="text" id="authors" name="authors" value="{{ submission.authors if submission }}" required>
+
+            <!-- Author Emails -->
+            <label for="emails">Author Emails (comma-separated)</label>
+            <input type="text" id="emails" name="emails" value="{{ submission.emails if submission }}" required>
+
+            <!-- Corresponding Author -->
+            <label for="corresponding_author">Corresponding Author</label>
+            <select id="corresponding_author" name="corresponding_author" required>
+                <option value="">-- Select Corresponding Author --</option>
+                {% set author_list = submission.authors.split(',') if submission and submission.authors else [] %}
+                {% for author in author_list %}
+                <option value="{{ author.strip() }}" {% if submission and submission.corresponding_author == author.strip() %}selected{% endif %}>
+                    {{ author.strip() }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <!-- PDF Upload -->
+            <label for="paper_pdf">Upload Paper (PDF only)</label>
+            <input type="file" id="paper_pdf" name="paper_pdf" accept="application/pdf" {% if not submission %}required{% endif %}>
+
+            <!-- Topics -->
+            <label>Topics (select at least one):</label><br>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="topics" value="AI" {% if submission and 'AI' in submission.topics %}checked{% endif %}> AI</label>
+                <label><input type="checkbox" name="topics" value="ML" {% if submission and 'ML' in submission.topics %}checked{% endif %}> ML</label>
+                <label><input type="checkbox" name="topics" value="Data Science" {% if submission and 'Data Science' in submission.topics %}checked{% endif %}> Data Science</label>
+            </div>
+
+            <!-- Agreement -->
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" name="agreement" required>
+                    I confirm that the submission is original and not under review elsewhere.
+                </label>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit">{% if submission %}Update Submission{% else %}Submit Paper{% endif %}</button>
+        </form>
+
+        <!-- Existing Submission Details -->
+        {% if submission %}
+        <div class="submission-box">
+            <h3>Your Submitted Paper:</h3>
+            <p><strong>Title:</strong> {{ submission.title }}</p>
+            <p><strong>Abstract:</strong> {{ submission.abstract }}</p>
+            <p><strong>Authors:</strong> {{ submission.authors }}</p>
+            <p><strong>Emails:</strong> {{ submission.emails }}</p>
+            <p><strong>Corresponding Author:</strong> {{ submission.corresponding_author }}</p>
+            <p><strong>Topics:</strong> {{ submission.topics }}</p>
+            <p><strong>PDF File:</strong>
+                <a href="{{ url_for('static', filename='uploads/' ~ submission.filename) }}" target="_blank">Download/View</a>
+            </p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

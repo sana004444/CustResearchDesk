@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="form-box">
+        <img src="{{ url_for('static', filename='images/Custlogo.png') }}" class="logo" alt="Logo">
+        <h2>Register</h2>
+        <form method="POST">
+            <input type="text" name="name" placeholder="Full Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <select name="role" required>
+                <option value="">Select Role</option>
+                <option value="Author">Author</option>
+                <option value="Reviewer">Reviewer</option>
+                <option value="Chair">Chair</option>
+            </select>
+            <button type="submit">Register</button>
+        </form>
+        <p>Already registered? <a href="/login">Login</a></p>
+    </div>
+</body>
+</html>
